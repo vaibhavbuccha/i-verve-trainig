@@ -1,0 +1,85 @@
+*{
+	padding: 0;
+	margin: 0;
+}
+body{
+	background: #4d79ff;
+}
+.form-main{
+	/*margin: 150px auto 0;*/
+	margin: 30px 30px;
+	background: #b3c6ff;
+	padding: 30px;
+}
+header{
+	text-align: center;
+	font-size: 30px;
+
+}
+table{
+	background: #66ccff;
+	padding: 20px;
+	border: 1px solid black;
+}
+thead{
+	background: #00264d;
+	color: white;
+	/*padding: 200px;*/
+}
+th{
+	padding: 15px;
+	background: #00264d;
+}
+tbody{
+	text-align: center;
+	/*padding: 20px;*/
+}
+td{
+	padding: 5px;
+}
+.btn{
+	padding: 5px 10px;
+}
+tr:nth-child(even){
+	background-color: #b3d9ff;
+}
+tr:nth-child(odd){
+	background-color:#1a8cff;
+}
+tr:hover{
+	background: black;
+	color:white;
+}
+.btn-edit{
+	border:1px solid #ff0066;
+	color: #ff0066;
+	border-radius: 5px;
+}
+.btn-edit:hover{
+	border:1px solid white;
+	color: white;
+	background-color: #ff0066;
+	border-radius: 5px;
+}
+.btn-delete{
+	border:1px solid #009999;
+	color: #009999;
+	border-radius: 5px;
+}
+.btn-delete:hover{
+	border:1px solid white;
+	color: white;
+	background-color: #009999;
+	border-radius: 5px;
+}
+input{
+	border-radius: 5px;
+	border: 1px solid #ff9933 ;
+	padding: 2px;
+}
+input:hover{
+	border:1px solid white;
+}
+#add{
+	display: block;
+}
