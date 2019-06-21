@@ -11,16 +11,18 @@ if(isset($_POST['signup']))
     $password = mysqli_real_escape_string($con,$_POST['password']);
     $password_con = mysqli_real_escape_string($con,$_POST['password_con']);
     $dob = mysqli_real_escape_string($con,$_POST['DOB']);
-    $hobbie = mysqli_real_escape_string($con,$_POST['hobbies']);
+    $gender = mysqli_real_escape_string($con,$_POST['gender']);
+    $hobbie1 = $_POST['hobbie'];
     $phone = mysqli_real_escape_string($con,$_POST['phone']);
     $country = mysqli_real_escape_string($con,$_POST['country']);
-    $username = "";
+    $Make_username = $name.rand(0,200);
+    $username = str_replace(' ','@',$Make_username);
     $enc_pass = md5($password);
     $error = array();
     if($password !== $password_con){
         array_push($error,"password not match");
     }
-
+    $hobbies = implode(',',$hobbie1);
     $check_user = "SELECT * from user where email='$email' or phone = '$phone' ";
     $result = mysqli_query($con,$check_user);
     
@@ -28,7 +30,7 @@ if(isset($_POST['signup']))
         array_push($error,"email phone no already registered");
     }
 
-    $hobbies=str_replace(" ", ",", $hobbie);
+ 
 
     // echo $hobbies;
     // print_r($error);
@@ -42,7 +44,7 @@ if(isset($_POST['signup']))
 
     if(empty($error))
     {
-        $insert = "INSERT INTO user(name,email,password,dob,hobbies,phone,country,username) VALUES ('$name','$email','$enc_pass','$dob','$hobbies','$phone','$country','$username')";
+        $insert = "INSERT INTO user(name,email,password,dob,hobbies,gender,phone,country,username,image) VALUES ('$name','$email','$enc_pass','$dob','$hobbies','$gender','$phone','$country','$username','$destination')";
         if(mysqli_query($con,$insert)){
             header("location:index.php");
         }
@@ -72,14 +74,14 @@ if(isset($_POST['signup']))
         <div id="tag_login"> SignUp Here! </div>
         
        
-        <form action="#" enctype="multipart/form-data" method="post">
+        <form action="#" id="signup"  enctype="multipart/form-data"  method="post">
             <table class="table table-hover">
                 <tr>   
                     <th class="form_tag">
                         Full Name : 
                     </th>
                     <td>
-                        <input type="text" required class="form-group" name="full_name">
+                        <input type="text" required class="form-group"  name="full_name">
                     </td>
                 <tr>
                 <tr>   
@@ -87,7 +89,8 @@ if(isset($_POST['signup']))
                         Email : 
                     </th>
                     <td>
-                        <input type="email" required class="form-group" name="email">
+                        <input type="email" id="email" required class="form-group" name="email">
+                        <div id="status"></div>
                     </td>
                 <tr>
                 <tr>   
@@ -95,7 +98,8 @@ if(isset($_POST['signup']))
                         Password : 
                     </th>
                     <td>
-                        <input type="password" required class="form-group" name="password">
+                        <input type="password"  minlength="8" required title="Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" class="form-group" id='password' name="password">
+                       
                     </td>
                 <tr>
                 <tr>   
@@ -103,7 +107,8 @@ if(isset($_POST['signup']))
                         Confirm Password : 
                     </th>
                     <td>
-                        <input type="password" required class="form-group" name="password_con">
+                        <input type="password"   minlength="8" required title="Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$" class="form-group" name="password_con">
+                        <div id="password_con_error"></div>
                     </td>
                 <tr>
                 <tr>   
@@ -116,10 +121,18 @@ if(isset($_POST['signup']))
                 <tr>
                 <tr>   
                     <th class="form_tag">
-                        Hobbies : 
+                        Gender : 
                     </th>
                     <td>
-                        <input type="radio" value="coding" required name="hobbies">Coding&nbsp;<input type="radio" value="playing" required name="hobbies">playing&nbsp;<input type="radio" value="singing" required  name="hobbies">singing
+                        <input type="radio" value="Male"  name="gender">Male&nbsp;<input type="radio" value="Female" name="gender">Female&nbsp;<input type="radio" value="Other"  name="gender">Other
+                    </td>
+                <tr>
+                <tr>   
+                    <th class="form_tag">
+                        Hobbie : 
+                    </th>
+                    <td>
+                        <input type="checkbox" value="Programing"  name="hobbie[]">Programing&nbsp;<input type="checkbox" value="Dancing" name="hobbie[]">Dancing&nbsp;<input type="checkbox" value="Art"  name="hobbie[]">Art
                     </td>
                 <tr>
                 <tr>   
@@ -127,7 +140,8 @@ if(isset($_POST['signup']))
                         Phone : 
                     </th>
                     <td>
-                        <input type="number" required class="form-group" name="phone">
+                        <input type="number" required  minlength="10"  class="form-group" name="phone">
+                        <div id="phone_error"></div>
                     </td>
                 <tr>
                 <tr>   
@@ -135,7 +149,7 @@ if(isset($_POST['signup']))
                         Country : 
                     </th>
                     <td>
-                        <select name="country" class="form-group">
+                        <select name="country" required class="form-group">
                             <option value="India">India</option>
                             <option value="US">US</option>
                             <option value="Pakistan">pakistan</option>
@@ -164,7 +178,53 @@ if(isset($_POST['signup']))
         </form>
     </div>
 </div>
+<script>
 
+// function validate(){
+
+// // refrence of form data
+
+// var full_name = document.signup.full_name.value;
+// // refrence of all error handlers
+// var name_error = document.getElementById('name_error');
+// var email_error = document.getElementById('email_error');
+// var password_error = document.getElementById('password_error');
+// var password_con_error = document.getElementById('password_con_error');
+// var phone_error = document.getElementById('phone_error');
+
+//     if(full_name.value == ""){
+//         full_name.style.border = "1px solid red";
+//         name_error.style.color = "red";
+//         name_error.textContent = "Fullname is required!";
+//         full_name.focus();
+//     }
+
+//     if(email.value == ""){
+//         email.style.border = "1px solid red";
+//         email_error.style.color = "red";
+//         email_error.textContent = "Email is required!";
+//     }
+
+//     if(password.value == ""){
+//         password.style.border = "1px solid red";
+//         password_error.style.color = "red";
+//         password_error.textContent = "Password is required!";
+//     }
+
+//     if(password_con.value == ""){
+//         password_con.style.border = "1px solid red";
+//         password_con_error.style.color = "red";
+//         password_con_error.textContent = "Please Re-enter the password to Confirm!";
+//     }
+
+//     if(phone.value == ""){
+//         phone.style.border = "1px solid red";
+//         phone_error.style.color = "red";
+//         phone_error.textContent = "Phone no. is required!";
+//     }
+    
+// }
+</script>
 
 
 

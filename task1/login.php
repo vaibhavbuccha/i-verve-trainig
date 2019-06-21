@@ -13,7 +13,7 @@ if(isset($_POST['login'])){
     $result2 = mysqli_query($con,$check_Phone);
     if(mysqli_num_rows($result)==1 OR mysqli_num_rows($result2)){
         session_start();
-        $_SESSION['user'] = $u_id;
+        $_SESSION['u_id'] = $u_id;
         header("location:welcome.php");
     }
     else{
